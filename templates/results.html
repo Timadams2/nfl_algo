@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Results</h2>
+
+{% if result is string %}
+    <p>{{ result }}</p>
+{% else %}
+    <h3>Saved Bets</h3>
+    <ul>
+        {% for bet in result %}
+            <li>{{ bet.team }} — ${{ bet.amount }} ({{ bet.type }})</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<a href="/">Home</a>
+{% endblock %}

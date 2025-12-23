@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Simulate a Matchup</h2>
+
+<form method="POST">
+    <label>Team A:</label>
+    <input type="text" name="team_a" required>
+
+    <label>Team B:</label>
+    <input type="text" name="team_b" required>
+
+    <button type="submit">Simulate</button>
+</form>
+
+<hr>
+
+<a href="/add-bet">Add a Bet</a><br>
+<a href="/bets">View Saved Bets</a>
+{% endblock %}

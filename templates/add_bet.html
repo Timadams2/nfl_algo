@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Add a Bet</h2>
+
+<form method="POST">
+    <label>Team:</label>
+    <input type="text" name="team" required>
+
+    <label>Amount:</label>
+    <input type="number" name="amount" required>
+
+    <label>Bet Type:</label>
+    <select name="type">
+        <option value="spread">Spread</option>
+        <option value="moneyline">Moneyline</option>
+        <option value="total">Total</option>
+    </select>
+
+    <button type="submit">Save Bet</button>
+</form>
+
+<a href="/">Back Home</a>
+{% endblock %}

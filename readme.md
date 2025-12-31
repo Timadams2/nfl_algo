@@ -1,0 +1,1 @@
+C:\Users\timot\AppData\Local\Programs\Python\Python314-32\python.exe app.py

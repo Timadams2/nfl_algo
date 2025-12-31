@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex">
+    <div class="panel" style="flex: 1;">
+        <h2>This Week's Slate</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Away Team</th>
+                    <th>Home Team</th>
+                </tr>
+            </thead>
+            <tbody>
+               {% for game in games %}
+                <tr>
+                    {% for book in game.bookmakers %}
+                        {% if book.key == "betmgm" %}
+                            {% for market in book.markets %}
+                                {% if market.key == "spreads" %}
+
+                                    {# --- AWAY TEAM SPREAD --- #}
+                                    {% for outcome in market.outcomes %}
+                                        {% if outcome.name == game.away_team %}
+                                            {% if outcome.point < 0 %}
+                                                <td>{{ game.away_team }} <a class="spread" style="color:red;">{{ outcome.point }}</a></td>
+                                            {% else %}
+                                                <td>{{ game.away_team }} <a class="spread" style="color:green;">+{{ outcome.point }}</a></td>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {# --- HOME TEAM SPREAD --- #}
+                                    {% for outcome in market.outcomes %}
+                                        {% if outcome.name == game.home_team %}
+                                            {% if outcome.point < 0 %}
+                                                <td>{{ game.home_team }} <a class="spread" style="color:red;">{{ outcome.point }}</a></td>
+                                            {% else %}
+                                                <td>{{ game.home_team }} <a class="spread" style="color:green;">+{{ outcome.point }}</a></td>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="panel" style="width: 380px;">
+        <h2>Filters</h2>
+
+        <p>Week selector, odds filters, or props can go here.</p>
+    </div>
+
+</div>
+{% endblock %}

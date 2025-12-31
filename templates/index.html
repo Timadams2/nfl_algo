@@ -1,20 +1,91 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Simulate a Matchup</h2>
+<div class="flex" style="text-align: center" >
+    <nav><a href="{{ url_for('stats')}}">Stats</a></nav>
+    <nav><a href="{{ url_for('algos')}}">Algos</a></nav>
+    <nav><a href="{{ url_for('slate')}}">Slate</a></nav>
+</div>
+<div class="flex">
 
-<form method="POST">
-    <label>Team A:</label>
-    <input type="text" name="team_a" required>
+    <!-- LEFT PANEL: BET LIST -->
+    <div class="panel" style="flex: 1;">
+        <h2>Saved Bets</h2>
 
-    <label>Team B:</label>
-    <input type="text" name="team_b" required>
+        <table>
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Team</th>
+                    <th>Details</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
 
-    <button type="submit">Simulate</button>
-</form>
+            <tbody>
+                {% for bet in result %}
+                    <tr>
+                        <td>${{ bet.amount }}</td>
+                        <td>{{ bet.team }}</td>
+                        <td>
+                            {% if bet.spread not in [None, "", "0"] %}
+                                Spread: {{ bet.spread }}
+                            {% elif bet.total not in [None, "", "0"] %}
+                                Total: {{ bet.total }}
+                            {% else %}
+                                {{ bet.type }}
+                            {% endif %}
+                        </td>
+                        <td>{{ bet.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<hr>
 
-<a href="/add-bet">Add a Bet</a><br>
-<a href="/bets">View Saved Bets</a>
+    <!-- RIGHT PANEL: ADD BET FORM -->
+    <div class="panel" style="width: 380px;">
+        <h2>Add a Bet</h2>
+
+        <form method="POST" action="/add-bet">
+
+            <label>Team</label>
+            <select name="team" required>
+                <option value="">-- Select a team --</option>
+                {% include 'team_options.html' %}
+            </select>
+
+            <label>Amount</label>
+            <input type="number" name="amount" required>
+
+            <label>Bet Type</label>
+            <select name="type" id="betType" onchange="toggleBetInputs()">
+                <option value="spread">Spread</option>
+                <option value="ML">Moneyline</option>
+                <option value="total">Total</option>
+            </select>
+
+            <div id="spreadContainer" style="display:block;">
+                <label>Spread</label>
+                <input type="number" name="spread" id="spreadInput"
+                       min="-20" max="20" step="0.5">
+            </div>
+
+            <div id="totalContainer" style="display:none;">
+                <label>Total</label>
+                <input type="number" name="total" id="totalInput"
+                       min="30" max="70" step="0.5">
+            </div>
+
+            <label>Date</label>
+            <input type="date" name="date" required>
+
+            <p></p>
+            <button type="submit">Save Bet</button>
+        </form>
+    </div>
+
+</div>
+
 {% endblock %}

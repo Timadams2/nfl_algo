@@ -1,4 +1,6 @@
 import json
+import requests
+import http.client
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
@@ -12,40 +14,56 @@ def load_bets():
     except:
         return []
 
+
 def save_bet(bet):
     bets = load_bets()
     bets.append(bet)
     with open(BET_FILE, "w") as f:
         json.dump(bets, f, indent=4)
 
-@app.route("/", methods=["GET", "POST"])
+
+# -----------------------------
+# MAIN DASHBOARD
+# -----------------------------
+@app.route("/", methods=["GET"])
 def index():
-    if request.method == "POST":
-        team_a = request.form.get("team_a")
-        team_b = request.form.get("team_b")
-
-        result = f"Simulated matchup: {team_a} vs {team_b}"
-        return render_template("results.html", result=result)
-
-    return render_template("index.html")
-
-@app.route("/add-bet", methods=["GET", "POST"])
-def add_bet():
-    if request.method == "POST":
-        bet = {
-            "team": request.form.get("team"),
-            "amount": request.form.get("amount"),
-            "type": request.form.get("type")
-        }
-        save_bet(bet)
-        return redirect(url_for("view_bets"))
-
-    return render_template("add_bet.html")
-
-@app.route("/bets")
-def view_bets():
     bets = load_bets()
-    return render_template("results.html", result=bets)
+    return render_template("index.html", result=bets)
+
+
+# -----------------------------
+# ADD BET (form POSTs here)
+# -----------------------------
+@app.route("/add-bet", methods=["POST"])
+def add_bet():
+    bet = {
+        "team": request.form.get("team"),
+        "amount": request.form.get("amount"),
+        "type": request.form.get("type"),
+        "spread": request.form.get("spread"),
+        "total": request.form.get("total"),
+        "date": request.form.get("date"),
+        "open": request.form.get("open")
+    }
+
+    save_bet(bet)
+    return redirect(url_for("index"))
+
+@app.route("/slate")
+def slate():
+    conn = "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds/?apiKey=0b131ba84bc49fe93d4b7aff87108e89&regions=us&markets=h2h,spreads&oddsFormat=american"
+    response = requests.get(conn).json()
+    print(response)
+
+    return render_template("slate.html", games=response)
+
+@app.route("/stats")
+def stats():
+    return render_template("stats.html")
+
+@app.route("/algos")
+def algos():
+    return render_template("algos.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
